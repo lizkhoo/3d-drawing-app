@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+
+		{% block styles %}{% endblock %}
+	</head>
+
+	<body>
+
+	<div class="container">
+	<!--LOGO-->
+		<div class="span4 logo">
+			<img src="http://blog.echoenduring.com/wp-content/uploads/2010/10/lorem-sorem-greyscale.jpg"/>
+		</div>
+
+	<!--NAVIGATION-->
+		<div class="span8">
+			<div class="menu-main-nav-container">
+				<ul id="menu-main-nav" class="menu">
+					<li id="menu-item-1" class="menu-item">
+					See Designs</li>
+				</ul>
+			</div>
+		</div>
+
+	<!--MAIN STUFF-->
+		<div id="feature">
+			<div class="span8 offset4 headline">
+				<h1>TITLE TITLE TITLE</h1>
+			</div>
+		</div>
+
+		{% block body %}{% endblock %}
+
+		<footer>
+			A page for ITP DWD Fall 2013 by Liz Khoo
+		</footer>
+
+	</div> <!-- /container -->
+
+	</body>
+</html>

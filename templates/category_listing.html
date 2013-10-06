@@ -1,0 +1,42 @@
+{% extends "layout/main.html" %}
+
+
+{% block body %}
+
+<div class="row">
+
+	<div class="span6">
+		<h3>{{ current_category.get('name')|title }}</h3>
+
+		{% for design in designs %}
+		<p>by {{ design.designer }}</p>
+		<p>
+			{% for cat in design.categories %}
+				<span class="label label-inverse"></a href="/category/{{ cat}}">{{cat|replace("_","")}}</a></span>
+			{% endfor %}
+			<hr/>
+		{% endfor %}
+
+	</div>
+
+	<div>
+		<h3>Categories</h3>
+		<ul>
+			{% for cat in categories %}
+			<li><a href="/category/{{ cat|replace(" ","_") )}}">{{ cat|title }}</a></li>
+			{% endfor %}
+		</ul>
+
+		<p>
+
+		<a href="/" class="btn btn-large btn-info">Add Your Design</a>
+
+	</div>
+
+</div>
+
+{% endblock %}
+
+
+{% block styles %}{% endblock %}
+{% block scripts %}{% endblock %}

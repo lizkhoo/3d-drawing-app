@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="row">
+
+	<div class="span12">
+		<h3>{{ design.title }}</h3>
+		<p>By {{ design.designer }}
+		<hr />
+		<p>{{ design.design}}</p>
+
+		<p>
+			<ul>
+				{% for c in design.categories %}
+				<li>{{ c|replace("_"," ") }}</li>
+				{% endfor %}
+			</ul>
+		</p>
+
+		<p>added: {{ idea.timestamp }} | id: {{ idea.id }}</p>
+
+		
+
+	</div>
+
+</div>
+
+
+{% endblock %}
+
+{% block styles %}{% endblock %}
+{% block scripts %}{% endblock %}

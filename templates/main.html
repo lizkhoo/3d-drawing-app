@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<div class="row">
+
+	<div class="span4">
+	<h3>Submitted Designs</h3>
+
+	{% for design in designs %}
+		<h4><a href="/designs/{{ design.slug }}">{{ design.title }}</a></h4>
+
+		<p>by {{ design.designer }}</p>
+		<p>
+		{% for cat in design.categories %}
+			<span class="label label-inverse"><a href="/category/{{ cat}}">{{ cat|replace("_"," ")}}</a></span>
+		{% endfor %}
+
+		<a class="label" href="/ideas/{{ idea.slug }}/edit">edit</a>
+		</p>
+
+		<hr/>
+	{% endfor %}
+
+	</div>
+
+
+	<div class="span8">
+
+		<form method="POST" action="/">
+			<legend><h3>Label Drawing</h3></legend>
+
+			<label for="designer">Name</label>
+			<input type="text" id="designer" name="designer" value="">
+			<br>
+
+			<label for="title">Drawing TItle</label>
+			<input type="text" id="title" name="title">
+			<br>
+
+			{% for c in categories|sort %}
+			<label class="checkbox">
+			<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
+			</label>
+			{% endfor %}
+
+			<button type="submit" class="btn btn-primary">Submit Drawing</button>
+
+		</form>
+
+	</div>
+
+</div>
+
+
+{% endblock %}
+
+{% block styles %}{% endblock %}
+{% block scripts %}{% endblock %}
