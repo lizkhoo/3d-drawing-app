@@ -6,10 +6,10 @@
 
 	<div class="span12">
 		<h3>{{ design.title }}</h3>
-		<p>By {{ design.designer }}
-		<hr />
+		<p>By {{ design.designer }}</p>
+		
 		<p>{{ design.design}}</p>
-
+		<hr />
 		<p>
 			<ul>
 				{% for c in design.categories %}
@@ -18,7 +18,7 @@
 			</ul>
 		</p>
 
-		<p>added: {{ idea.timestamp }} | id: {{ idea.id }}</p>
+		<p>added: {{ design.timestamp }} | id: {{ design.id }}</p>
 
 		
 

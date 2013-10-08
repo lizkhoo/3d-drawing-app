@@ -1,6 +1,6 @@
 # mongoengine database module
 from mongoengine import *
-form datetime import datetime
+from datetime import datetime
 import logging
 
 

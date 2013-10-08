@@ -19,23 +19,22 @@ db = MongoEngine(app)
 import models
 
 # checkbox of categories
-categories = ['homegood', 'accessory', 'artpiece']
+categories = ['home good','accessory','art piece']
 
 # --Routes--
 # homepage
 @app.route("/", methods=['GET','POST'])
 def index():
 
-	if request.metohd == "POST":
+	if request.method == "POST":
 
 		# get form data
-		design = models.Design(
-			designer = request.form.get('designer', 'anonymous'),
-			title = request.form.get('title', 'no title'),
-			slug = slugify(design.title + " " + design.designer),
-			design = request.form.get('design', ''),
-			categories = request.form.get('categories')
-			)
+		design = models.Design()
+		design.designer = request.form.get('designer', 'anonymous')
+		design.title = request.form.get('title', 'no title')
+		design.slug = slugify(design.title + " " + design.designer)
+		design.design = request.form.get('design', '')
+		#design.categories = request.form.get('categories')
 
 		design.save()
 
@@ -44,7 +43,7 @@ def index():
 
 	else:
 		# form management stuff
-		if request.meothd == "POST" and request.form.getlist('categories'):
+		if request.method == "POST" and request.form.getlist('categories'):
 			for c in request.form.getlist('categories'):
 				idea_form.categories.append_entry(c)
 
@@ -95,7 +94,7 @@ def design_detail(proj_slug):
 		'design' : design
 	}
 
-	return render_template('project_entry.html', **templateData)
+	return render_template('design_detail.html', **templateData)
 
 
 @app.errorhandler(404)

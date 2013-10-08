@@ -2,42 +2,53 @@
 
 <html>
 	<head>
-
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+	    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-responsive.css">
 		{% block styles %}{% endblock %}
 	</head>
 
 	<body>
+		<div class="container">
 
-	<div class="container">
-	<!--LOGO-->
-		<div class="span4 logo">
-			<img src="http://blog.echoenduring.com/wp-content/uploads/2010/10/lorem-sorem-greyscale.jpg"/>
+			<!--NAVIGATION-->
+		<div class="navbar navbar-static-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="navbar-brand" href="/"><img src="/static/img/lorem-sorem-greyscale.jpg" width="50" height="50" class="img-circle"/></a>
+		
+					<div class="navbar-collapse-collapse">
+						<ul class="nav navbar-nav">
+							<li><a href="/">Home</a></li>
+							<li><a href="#">About</a></li>
+							<li><a href="#">All Designs</a></li>
+						</ul>
+					</div>
+				</div>
 		</div>
-
-	<!--NAVIGATION-->
-		<div class="span8">
-			<div class="menu-main-nav-container">
-				<ul id="menu-main-nav" class="menu">
-					<li id="menu-item-1" class="menu-item">
-					See Designs</li>
-				</ul>
-			</div>
 		</div>
 
 	<!--MAIN STUFF-->
 		<div id="feature">
-			<div class="span8 offset4 headline">
-				<h1>TITLE TITLE TITLE</h1>
+			<div class="container">
+			<div class="span8 offset2 headline">
+				<h1>In Browser Drawing App</h1>
 			</div>
+		</div>
 		</div>
 
 		{% block body %}{% endblock %}
-
-		<footer>
-			A page for ITP DWD Fall 2013 by Liz Khoo
-		</footer>
-
+        <!-- Copyright Area -->
+        <hr>
+        <div class="container">
+            <div class="footer fixed-bottom">
+            	<p>A page for ITP DWD Fall 2013 by Liz Khoo</p>
+            </div>
+        </div>
 	</div> <!-- /container -->
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
 
 	</body>
 </html>

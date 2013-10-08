@@ -4,7 +4,7 @@
 
 <div class="row">
 
-	<div class="span4">
+	<div class="col-md-4">
 	<h3>Submitted Designs</h3>
 
 	{% for design in designs %}
@@ -16,7 +16,7 @@
 			<span class="label label-inverse"><a href="/category/{{ cat}}">{{ cat|replace("_"," ")}}</a></span>
 		{% endfor %}
 
-		<a class="label" href="/ideas/{{ idea.slug }}/edit">edit</a>
+		<a class="label" href="/designs/{{ design.slug }}/edit">edit</a>
 		</p>
 
 		<hr/>
@@ -25,7 +25,7 @@
 	</div>
 
 
-	<div class="span8">
+	<div class="col-md-8">
 
 		<form method="POST" action="/">
 			<legend><h3>Label Drawing</h3></legend>
@@ -34,15 +34,21 @@
 			<input type="text" id="designer" name="designer" value="">
 			<br>
 
-			<label for="title">Drawing TItle</label>
+			<label for="title">Drawing Title</label>
 			<input type="text" id="title" name="title">
 			<br>
 
+			<label>Category</label>
 			{% for c in categories|sort %}
 			<label class="checkbox">
 			<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
 			</label>
 			{% endfor %}
+			<br>
+
+			<label for="design">Design Data</label>
+			<input type="text" id="design" name="design">
+			<br>
 
 			<button type="submit" class="btn btn-primary">Submit Drawing</button>
 
