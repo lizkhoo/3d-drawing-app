@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div class="container">
+
+<div id="content" style="position: relative; overflow: hidden; height: 748px;" class="isotope">
+
+	{% for design in designs %}
+	<div class="boxportfolio4 cat2 cat3 isotope-item" stype="position: absolute; left: 0px; top: 0px; -webkit-transform: translate 3d(0px, 0px, 0px);">
+	<div class="boxcontainer">
+
+		{% if design.image %}
+		  <p><img src="{{ design.image }}" /><p>
+		{% endif %}
+
+		<h1><a href="/designs/{{ design.slug }}">{{ design.title }}</a></h1>
+		<p>by {{ design.designer }}</p>
+		<p>{{design.categories}}<br>
+
+		{% for cat in design.categories %}
+			<span class="label label-inverse">
+				<a href="/category/{{ cat}}">{{ cat|replace("_"," ") }}</a>
+			</span>
+		{% endfor %}
+		</p>
+
+	</div>
+	</div>
+	{% endfor %}
+
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block styles %}{% endblock %}
+{% block scripts %}{% endblock %}

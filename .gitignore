@@ -2,3 +2,7 @@
 .DS_Store
 venv
 *.pyc
+/templates/main.html
+/templates/design_edit.html
+/tempaltes/design_detail.html
+/templates/draw.html

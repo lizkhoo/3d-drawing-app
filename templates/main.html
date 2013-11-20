@@ -12,11 +12,17 @@
 
 		<p>by {{ design.designer }}</p>
 		<p>
+
+			{{design.categories}}
+			<br>
 		{% for cat in design.categories %}
-			<span class="label label-inverse"><a href="/category/{{ cat}}">{{ cat|replace("_"," ")}}</a></span>
+
+		
+			<span class="label label-inverse"><a href="/category/{{ cat}}">
+				{{ cat|replace("_"," ") }}</a></span>
 		{% endfor %}
 
-		<a class="label" href="/designs/{{ design.slug }}/edit">edit</a>
+		<a class="label" href="/designs/edit/{{ design.id }}">edit</a>
 		</p>
 
 		<hr/>
@@ -25,35 +31,76 @@
 	</div>
 
 
-	<div class="col-md-8">
+	<div class="col-md-4">
 
-		<form method="POST" action="/">
+		<form method="POST" role="form">
+			{{ form.csrf_token }}
+
 			<legend><h3>Label Drawing</h3></legend>
 
-			<label for="designer">Name</label>
-			<input type="text" id="designer" name="designer" value="">
-			<br>
+			{% if form.errors %}
+				<ul class="errors">
+					{% for field_name, field_errors in form.errors|dictsort if field_errors %}
+						{% for error in field_errors %}
+							<li>{{ form[field_name].label }} : {{ error }}</li>
+						{% endfor %}
+					{% endfor %}
+				</ul>
+			{% endif %}
 
-			<label for="title">Drawing Title</label>
+			<div class="form-group">
+				{{ form.designer.label() }}
+				{{ form.designer(class='form-control', type='text') }}
+
+			<!--<label for="designer">Name</label>
+			<input type="text" id="designer" name="designer" value="">
+			<br> -->
+
+			</div>
+
+			<div class="form-group">
+				{{ form.title.label() }}
+				{{ form.title(class='form-control', type='text') }}
+
+			<!-- <label for="title">Drawing Title</label>
 			<input type="text" id="title" name="title">
-			<br>
+			<br> -->
+			</div>
 
 			<label>Category</label>
 			{% for c in categories|sort %}
-			<label class="checkbox">
-			<input type="checkbox" name="categories" value="{{c}}"> {{ c|title }}
-			</label>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" 
+					name="categories" 
+					value="{{ c|replace(" ","_") }}" 
+						{% if c|replace(" ","_") in form.categories.data %}
+							checked=checked
+						{% endif %}
+					> {{ c|title }}
+				</label>
+			</div>
 			{% endfor %}
-			<br>
 
-			<label for="design">Design Data</label>
-			<input type="text" id="design" name="design">
+			<div class="form-group">
+				{{ form.design.label() }}
+				{{ form.design(class='form-control', type='text') }}
+
+				<!-- <label for="design">Design Data</label>
+				<input type="text" id="design" name="design"> -->
+			</div>
+
 			<br>
 
 			<button type="submit" class="btn btn-primary">Submit Drawing</button>
 
 		</form>
 
+	</div>
+
+	<div class="col-md-4">
+			Drawing JS goes in here
+			Button function creates vector list; pass ID to app.py
 	</div>
 
 </div>

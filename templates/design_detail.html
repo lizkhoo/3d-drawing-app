@@ -6,10 +6,16 @@
 
 	<div class="span12">
 		<h3>{{ design.title }}</h3>
-		<p>By {{ design.designer }}</p>
+		<p>By {{ design.designer }}
+			(<a href="/designs/edit/{{design.id}}")>edit</a>)
+			(<a href="/data/designs/{{design.id}}")>JSON</a>)
+
+		</p>
+		<hr>
 		
-		<p>{{ design.design}}</p>
+		<p>{{ design.design }}</p>
 		<hr />
+
 		<p>
 			<ul>
 				{% for c in design.categories %}
@@ -19,7 +25,6 @@
 		</p>
 
 		<p>added: {{ design.timestamp }} | id: {{ design.id }}</p>
-
 		
 
 	</div>

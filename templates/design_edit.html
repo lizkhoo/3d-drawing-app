@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+
+<div class="row">
+
+	<!-- left column -->
+	<div class="col-md-6">
+
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+		    {% for message in messages %}
+		    	<div class="alert alert-success">{{ message }}</div>
+		    {% endfor %}
+		  {% endif %}
+		{% endwith %}
+
+		<form method="POST" role="form">
+			{{ form.csrf_token }}
+
+			<legend><h3>Edit Design Attributes</h3></legend>
+
+			{% if form.errors %}
+			    <ul class="errors">
+			        {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+			            {% for error in field_errors %}
+			                <li>{{ form[field_name].label }}: {{ error }}</li>
+			            {% endfor %}
+			        {% endfor %}
+			    </ul>
+			{% endif %} 
+
+			<div class="form-group">
+				{{ form.designer.label() }}
+				{{ form.designer(class='form-control', type='text') }}
+			</div>
+
+			<div class="form-group">
+				{{ form.title.label() }}
+				{{ form.title(class='form-control', type='text') }}
+			</div>
+			
+			<div>
+				3D drawing cannot be edited, sorry.
+			</div>
+
+			<label>Category</label>
+			<p class="help-block">Change category selections.</p>
+			{% for c in categories|sort %}
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" \
+						name="categories" 
+						value="{{ c|replace(" ","_") }}" {% if c|replace(" ","_") in form.categories.data %}checked=checked{% endif %}
+					> {{ c|title }}
+				</label>
+			</div>
+			{% endfor %}
+
+			<input type='hidden' value='{{ design_id }}' name='design_id'> 
+
+
+			<button type="submit" class="btn btn-primary">Update</button>
+		</form>
+	</div>
+
+
+	
+
+</div>
+
+{% endblock %}
+
+
+{% block styles %}{% endblock %}
+{% block scripts %}{% endblock %}

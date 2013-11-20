@@ -1,4 +1,4 @@
-{% extends "layout/main.html" %}
+{% extends "layout.html" %}
 
 
 {% block body %}
@@ -23,7 +23,7 @@
 		<h3>Categories</h3>
 		<ul>
 			{% for cat in categories %}
-			<li><a href="/category/{{ cat|replace(" ","_") )}}">{{ cat|title }}</a></li>
+			<li><a href="/category/{{ cat|replace(" ","_") }}">{{ cat|title }}</a></li>
 			{% endfor %}
 		</ul>
 

@@ -8,6 +8,7 @@
  * Designed and built with all the love in the world by @mdo and @fat.
  */
 
+
 .clearfix {
   *zoom: 1;
 }
@@ -1086,7 +1087,17 @@
   .navbar .nav-collapse .nav.pull-right {
     float: none;
     margin-left: 0;
+    margin-top: 30px;
+    font-size: 18px;
+
   }
+
+.navbar .nav {
+  float:right;
+  margin-top:30px;
+  font-size:16px;
+}
+
   .nav-collapse,
   .nav-collapse.collapse {
     height: 0;
