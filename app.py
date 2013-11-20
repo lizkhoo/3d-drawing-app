@@ -53,6 +53,7 @@ def draw():
 		design.title = request.form.get('title', 'no title')
 		design.slug = slugify(design.title + " " + design.designer)
 		design.design = request.form.get('design', '')
+		design.image = request.form.get('image', '')
 		design.categories = request.form.getlist('categories')
 		# use .getlist for HTTP Get forms with checkboxes, bc it returns a list
 

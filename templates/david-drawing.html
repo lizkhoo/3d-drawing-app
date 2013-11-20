@@ -9,7 +9,7 @@
 					overflow: hidden;
 				}
 	</style>
-	
+
 	<script type="text/javascript" src="../static/js/modal.js"></script>
 	<script type="text/javascript" src="../static/js/three.min.js"></script>
 </head>
@@ -104,12 +104,12 @@
 					data-dismiss="modal">&times;</a>
 </section>
 
-<script defer="defer">
+<script>
 	var renderer,scene,camera,geometry,material,width,height,tubemesh,count,sverts,z,camParent;
 	var draw = false;
 	var tubes = [];
 	sverts = "";
-	console.log("hi");
+	console.log({{design.design}} + "hi");
 
 	init();
 	animate();
@@ -151,8 +151,11 @@
 
 		geometry = new THREE.Geometry();
 		geometry.name = "Liz_Line";
-		
-		var vertString = "" || "{{ design.design }}";
+		var vertString;
+		console.log("{{design.design}}");
+		if("{{design.design}}")
+		vertString = "{{ design.design }}" ;
+		else vertString = "1,2,3,4,5,6";
 
 		console.log(vertString);
 		
@@ -164,15 +167,14 @@
 			if(verts[i])
 			geometry.vertices.push(new THREE.Vector3(parseFloat(verts[i])||0,parseFloat(verts[i+1])||0,parseFloat(verts[i+2])||0));
 		}
-		//console.log(geometry.vertices);
+		
 
 		scene.add(geometry);
-
 		var curve = new THREE.SplineCurve3(geometry.vertices);
 		var geo = new THREE.TubeGeometry(curve, geometry.vertices.length*5, 12, 3, closed);
 		//geometry.dynamic = true;
 		tubeMesh = THREE.SceneUtils.createMultiMaterialObject(geo, [new THREE.MeshLambertMaterial({color: 0xffffff})]);
-
+console.log(tubeMesh);
 		tubeMesh.name = tubeMesh;
 		tubes.push(tubeMesh);
 		scene.add(tubeMesh);  
