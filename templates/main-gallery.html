@@ -17,8 +17,7 @@
 
 		<h1><a href="/designs/{{ design.slug }}">{{ design.title }}</a></h1>
 		<p>by {{ design.designer }}</p>
-		<p>{{design.categories}}<br>
-
+		
 		{% for cat in design.categories %}
 			<span class="label label-inverse">
 				<a href="/category/{{ cat}}">{{ cat|replace("_"," ") }}</a>
