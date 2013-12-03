@@ -31,7 +31,7 @@ def index():
 
 	# render template
 	templateData = {
-		'designs' : models.Design.objects(),
+		'designs' : models.Design.objects().order_by('+timestamp'),
 		'categories' : categories
 	}
 
@@ -55,6 +55,7 @@ def draw():
 		design.design = request.form.get('design', '')
 		design.image = request.form.get('image', '')
 		design.categories = request.form.getlist('categories')
+		design.metadata = request.form.get('metadata', '')
 		# use .getlist for HTTP Get forms with checkboxes, bc it returns a list
 
 		design.save()
@@ -79,7 +80,7 @@ def draw():
 			'design' : design
 		}
 
-		return render_template('david-drawing.html', **templateData)
+		return render_template('david-drawing-final.html', **templateData)
 
 
 @app.route("/about")
@@ -153,8 +154,8 @@ def design_detail(proj_slug):
 				'categories' : categories
 			}
 
-			return render_template('drawing-view.html', **templateData)
-	
+			return render_template('david-drawing-final.html', **templateData)
+
 	# just show the design entry
 	else:
 		# get the design convert it to the model form, this prepopulates the form
@@ -174,7 +175,7 @@ def design_detail(proj_slug):
 			'categories' : categories
 		}
 
-		return render_template('drawing-view.html', **templateData)
+		return render_template('david-drawing-final.html', **templateData)
 
 
 

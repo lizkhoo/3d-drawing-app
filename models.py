@@ -12,7 +12,8 @@ class Design(Document):
 	title = StringField(max_length=120, required=True, verbose_name="Drawing Title")
 	slug = StringField()
 	design = StringField(verbose_name="Design Data")
-	image = StringField(required=True, max_length=255)
+	image = StringField(required=True)
+	metadata = StringField(max_length=120, required=True, verbose_name="Metadata: ")
 
 	# Timestamp will record the date and time idea was created.
 	timestamp = DateTimeField(default=datetime.now())

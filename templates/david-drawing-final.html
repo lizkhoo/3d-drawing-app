@@ -1,0 +1,855 @@
+
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../static/css/modal.css"/>
+<style>
+	body {
+		margin: 0px;
+		padding: 0px;color:white;
+		font-size:.9em;
+		background-color: #000000;		
+		overflow: hidden;
+	}
+	strong{
+		color:red;
+		font-size:1.2em;
+	}
+	#bar{
+		background-color:#002244;
+	}
+	textarea{
+		box-sizing:no-border;
+	}
+</style>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript" src="../static/js/modal.js"></script>
+<script src="../static/js/three.min.js"></script>
+<script src="../static/js/anaglyph.js"></script>
+<script src="../static/js/fileSaver.js"></script>
+<script src="../static/js/lobserCollection.js"></script>
+
+</head>
+<body>
+<!-- ======= BUTTONS ======= -->
+<div id="bar">
+	<a href="#modal-form" class="call-modal"><input type="button" value="SAVE" onClick="printVerts();"></a>
+	<input type="button" value="CLEAR" OnClick="removal();killGeo();camParent.rotation.x=0;//camera.rotation.x -= .1;camera.position.y=0;">
+	Keyboard :<strong>d</strong>raw - <strong>r</strong>otate - <strong>s</strong>cale - <strong>c</strong>lear one - <strong>C</strong>lear all - <strong>a</strong>verages - <strong>f</strong>un - <strong>g</strong>ame - <strong>w</strong>rite .obj - <strong>L</strong> for anaglyph (3d) - <strong>p</strong>edraw - <strong>n</strong>oise 
+	
+	X <textarea id="x" default-value="0" name="user" style="width:160px" cols="3" rows="1"></textarea>
+		
+	Y <textarea id="y" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea>
+
+	Z <textarea id="z" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea>
+
+	SC <textarea id="sc" value="1" name="user" style="width:160px" cols="3" rows="1"></textarea>
+
+	<input type="button" id="funbutton" value="fun" style="width:50px;background-color:white"onclick="onFun();">
+
+	<input type="text" id="fat" value="5"name="user" style="width:30px" cols="3" rows="1">
+	<input type="button" id="buttonid" value="fat" style="width:50px"onclick="changeThickness()">
+
+	<input type="text" id="scale" value="1" name="user" style="width:30px" cols="3" rows="1">
+	<input type="button" id="buttonid" value="scale" style="width:50px"onclick="changeScale()"><span id="setscale">output scale<span>
+
+</div>
+
+<!-- ======= POPUP FORM ======= -->
+
+<!-- A modal with its content -->
+<section class="semantic-content" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+
+<div class="modal-inner">
+		<header>
+			<h2 id="modal-label">Save Drawing</h2>
+		</header>
+
+<div class="modal-content">
+
+					
+<form method="POST" role="form" class="form-horizontal">
+	{{ form.csrf_token }}
+
+
+			{% if form.errors %}
+				<ul class="errors">
+					{% for field_name, field_errors in form.errors|dictsort if field_errors %}
+						{% for error in field_errors %}
+							<li>{{ form[field_name].label }} : {{ error }}</li>
+						{% endfor %}
+					{% endfor %}
+				</ul>
+			{% endif %}
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label"> {{ form.designer.label() }} </label>
+				
+					{{ form.designer(class='form-control', type='text') }} 
+				
+				<br> 
+			</div>
+
+			<div class="form-group">
+				{{ form.title.label() }}
+				{{ form.title(class='form-control', type='text') }}
+
+				<br>
+			</div>
+
+			<label>Category</label>
+
+			{% for c in categories|sort %}
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" 
+					name="categories" 
+					value="{{ c|replace(" ","_") }}" 
+						{% if c|replace(" ","_") in form.categories.data %}
+							checked=checked
+						{% endif %}> 
+						{{ c|title }}
+				</label>
+			</div>
+			{% endfor %}
+
+			<div class="form-group">
+				{{ form.design.label() }}
+				{{ form.design( id='designTextArea', class='form-control', type='text') }}
+			</div>
+
+			<div class="form-group">
+				{{ form.image.label() }}
+				{{ form.image( id='imageData', class='form-control', type='image/png') }}
+			</div>
+
+			<div class="form-group">
+				{{ form.metadata.label() }}
+				{{ form.metadata( id='metaData', class='form-control', type='text') }}
+			</div>
+
+			<br>
+			<button type="submit" class="btn btn-primary">Save Drawing</button>
+
+</form>
+
+</div>
+</div>
+
+	<!-- Use Hash-Bang to maintain scroll position when closing modal -->
+	<a href="#!" class="modal-close" title="Close this modal" data-dismiss="modal" onClick="toggleSave();">&times;</a>
+</section>
+
+
+<script>
+	var renderer,scene,camera,geometry,material,width,height,tubemesh,count,sverts,camParent,plane,rotateParent,stx,sty,hirezGeo,hirezGeoSwitcher,scaleGeo,geoSX,geoSY,geoSZ,x,y,z,fun,funCount,ana,radius,funx,funy,funz,wScale,time,game,pPos,noise,noisy,reGeo;
+	var draw = false;
+	var rotator = false;
+	var mousePos;
+	var tubes = [];
+	sverts = "";
+	var savingmode = false;
+
+	init();
+	animate();
+
+	function toggleSave(){
+		savingmode = false;
+		console.log("savingmode: " + savingmode);
+	}
+
+	function kill(){
+
+		var obj, i;
+		for ( i = scene.children.length - 1; i >= 0 ; i -- ) {
+		    obj = scene.children[ i ];
+		    if ( obj !== camera && obj!=light) {
+		        scene.remove(obj);
+		    }
+		}
+	}
+
+	function init(){
+
+		ana=false;	
+		count=0;
+		z=0.1;
+		stx = [];
+		sty = [];
+		fun=false;
+		game=false;
+		noisy=false;
+		funCount=0;
+		wScale = 1;
+		reGeo = true;
+
+		funx = funy = funz = time = 0.0;
+		funsc = 1;
+
+		pPos = new THREE.Vector3();
+		noise = new SimplexNoise();
+
+
+		hirezGeo = true;
+		hirezGeoSwitcher = true;
+		scaleGeo = false;
+		geoSX = geoSY = geoSZ = 1;
+
+		renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		scene = new THREE.Scene();
+
+		var mesher = new THREE.Mesh( new THREE.SphereGeometry( 12, 12, 12 ), new THREE.MeshLambertMaterial( { color:0x99DDFF } ) );
+
+		//scene.add(mesher);
+
+		var directionalLight = new THREE.DirectionalLight( 0xBBDDFF, .51 );
+		directionalLight.position.set( 0, -1, -.1 );
+		scene.add( directionalLight );
+
+		var directionalLight = new THREE.DirectionalLight( 0xCC99FF, .3 );
+		directionalLight.position.set( 0, 1, -.1);
+		scene.add( directionalLight );
+
+		var directionalLight = new THREE.DirectionalLight( 0xCC99FF, .6 );
+		directionalLight.position.set( .1, 1, 1 );
+		scene.add( directionalLight );
+
+		var directionalLight = new THREE.DirectionalLight( 0x99CC88, .6 );
+		directionalLight.position.set( -.10, 1, 1 );
+		scene.add( directionalLight );
+
+		var directionalLight = new THREE.PointLight( 0xffffff, -.7 );
+		directionalLight.position.set( 0, 0, 0);
+		scene.add( directionalLight );
+
+		rotateParent = new THREE.Object3D();
+		//scene.add(rotateParent);
+
+
+		geometry = new THREE.Geometry();
+		geometry.name = "Liz_Line";
+		var vertString = " {{ design.design }}" || "";
+		var verts = vertString.split(",");
+
+		for(var i = 0 ; i < verts.length ; i +=3){
+			if(verts[i])
+			geometry.vertices.push(new THREE.Vector3(parseFloat(verts[i])||0,parseFloat(verts[i+1])||0,parseFloat(verts[i+2])||0));
+		}
+		//if(geometry.vertices.length<4)
+			//geometry.vertices.pop();
+
+		radius = "5";
+		radius *= 0.5;
+
+
+		var curve = new THREE.SplineCurve3(geometry.vertices);
+		var geo = new THREE.TubeGeometry(curve, geometry.vertices.length*5, 12, 3, closed);
+		tubeMesh = THREE.SceneUtils.createMultiMaterialObject(geo, [new THREE.MeshLambertMaterial({color: 0xffffff})]);
+
+		tubeMesh.name = tubeMesh;
+		tubes.push(tubeMesh);
+
+		var rotateChild = new THREE.Object3D();
+		rotateChild.add(tubeMesh);
+
+		rotateParent.add(rotateChild);  
+
+		//rotateParent.add(geometry);
+		rotateParent.name = "rotateParent";
+		scene.add(rotateParent);
+
+		plane = new THREE.Mesh(new THREE.SphereGeometry(300,100,100),new THREE.MeshLambertMaterial( { color:0xFFFFFF, transparent:true, opacity:.0,emissive:0x99DDFF} ));
+		plane.rotation.x = -1;
+		plane.name = plane;
+		console.log(plane);
+
+		//scene.add(plane);
+
+		var plane2 = new THREE.Mesh(new THREE.TorusGeometry(300,2,10,100),new THREE.MeshLambertMaterial( { color:0xFFFFFF, transparent:true, opacity:.5,emissive:0x999999} ));
+		plane2.rotation.x=Math.PI;
+		scene.add(plane2);
+
+
+		console.log(scene);
+		width = window.innerWidth;
+		height = window.innerHeight;
+
+		camera = new THREE.PerspectiveCamera( 20, width/height, 500, 4000);
+			//console.log(width/height);
+			camera.position.set(0,0,2000);
+
+		//camera = new THREE.OrthographicCamera( width /  2, width / -2, height / -2, height /  2, 1, 10000 );
+		camParent = new THREE.Object3D();
+		camera.lookAt(scene.position);
+
+		//camera.position.set (0, 0, -1000);
+		//camera.lookAt (new THREE.Vector3(0, 0, 0)); 
+		camParent.add(camera);
+		scene.add(camParent);
+
+		//define material (blue line in this case)
+		material = new THREE.LineBasicMaterial({
+			color: 0x0000ff
+		});
+
+		this.effect = new THREE.AnaglyphEffect( renderer,width,height );
+		effect.focalLength = 10;
+		effect.setSize( width, height );
+	}
+
+	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+	//document.addEventListener('mousewheel',scrollFunc,false);
+
+
+	function onDocumentMouseDown( event ) {
+		if(event.clientY>20)
+			draw = true;
+	}
+	function onDocumentMouseUp( event ) {
+		if(event.clientY>20)
+			draw = false;
+	}
+	window.onkeyup = onKeyUp;
+	window.onkeypress = onKeyPress;
+
+	function onFun(){
+		fun = !fun;
+		funColor();
+		if(fun)draw=true;
+		changeFun();
+
+	}
+
+	function onKeyPress(evt) {
+		if (savingmode == false) {
+			hirezGeo = false;
+			console.log(evt.keyCode);
+			if(evt.keyCode == 100){
+				draw = true;
+			}
+			if(evt.keyCode == 114){
+				rotator = true;
+			}
+			if(evt.keyCode == 108){
+				ana = !ana;
+			}
+			if(evt.keyCode == 119){
+				saver(tubeMesh,wScale*.0001);
+			}
+			if(evt.keyCode == 115){
+				scaleGeo = true;
+			}
+			if(evt.keyCode == 102){
+				onFun();
+				
+			}
+			if(evt.keyCode == 103){
+				game=true;
+				draw=true;
+				scaleGeometry(eval(funsc));
+			}
+
+			if(evt.keyCode == 97){
+				averageVertices(geometry);
+				if(rotateParent.children.length>0){
+						removal();
+				}
+				updateGeo(9,radius,6);
+			}
+			//clear all
+			if(evt.keyCode == 67){
+				removal();
+				killGeo();
+			}
+			if(evt.keyCode == 112){
+				reGeo=!reGeo;
+			}
+			if(evt.keyCode == 110){
+				noisy=!noisy;
+			}
+			//clear one
+			if(evt.keyCode == 99){
+				geometry.vertices.pop();
+				if(rotateParent.children.length>0){
+						removal();
+				}
+				updateGeo(9,radius,6);
+
+			}
+			if(evt.keyCode == 118){
+				geometry.vertices.shift();
+				if(rotateParent.children.length>0){
+						removal();
+				}
+				updateGeo(9,radius,6);
+			}
+		}
+	}
+
+	changeScale = function(){
+		var tscale = document.getElementById('scale');
+		if(tscale.value>-1e6 && tscale.value < 1e6){
+			wScale = tscale.value;
+			var overall = .01*(2*300*wScale)+"cm";
+			var tubesize = .1*(2*radius*wScale)+"mm"
+			document.getElementById('setscale').firstChild.nodeValue = overall + " " + tubesize;
+
+		}
+		else{
+			alert("NaN or out of range");
+		}
+
+	}
+	changeFun = function(){
+			//console.log("I haven't the foggiest idea what that means");
+
+	var tfunx = document.getElementById('x');
+	var tfuny = document.getElementById('y');
+	var tfunz = document.getElementById('z');
+	var tsc = document.getElementById('sc');
+
+	funx = /*parseFloat(*/tfunx.value || "0";//);
+	funy = /*parseFloat(*/tfuny.value || "0";//);
+	funz = /*parseFloat(*/tfunz.value || "0";//);
+	funsc= /*parseFloat(*/tsc.value || "1" ;//);
+
+	try {
+	 if(eval(funx)>-1e6 && eval(funx) < 1e6 && 
+		eval(funy)>-1e6 && eval(funy) < 1e6 && 
+		eval(funz)>-1e6 && eval(funz) < 1e6 &&
+		eval(funsc)>-1e6 && eval(funsc) < 1e6){
+			
+		}	
+	}
+	catch(e){
+		alert(e.message + " no fun for you");
+		fun = false;
+		draw = false;
+		funColor();
+		funx = /*parseFloat(*/"0";//);
+		funy = /*parseFloat(*/"0";//);
+		funz = /*parseFloat(*/"0";//);
+		funsc= /*parseFloat(*/"0" ;//);
+	}
+	
+
+	}
+
+	callme = function(mess){
+		alert(mess);
+
+	}
+
+	function noiseVerts(geo){
+		if(geo!=undefined){
+			if(geo.vertices && geo.vertices.length>0){
+				//console.log(geo.vertices);
+				if(rotateParent.children.length>0){
+					removal();
+				}
+				for(var i = 0 ; i < geo.vertices.length ; i++){
+					geo.vertices[i].x += .5*noise.noise(i*.051,i*.051);
+					geo.vertices[i].y += .5*noise.noise(i*.051+100,i*.051);
+					geo.vertices[i].z += .5*noise.noise(i*.051+200,i*.051);
+				}
+
+			}
+		}
+	}
+
+	funColor = function(){
+		if(fun){
+	   document.getElementById("funbutton").setAttribute("style","background-color:red");
+		}
+		else
+		document.getElementById("funbutton").setAttribute("style","background-color:white");
+
+	}
+
+	changeThickness = function(){
+		var tradius = document.getElementById('fat');
+		if(tradius.value>-1e6 && tradius.value < 1e6){
+			radius = tradius.value * 0.5;
+			updateGeo(7,radius,9);
+
+		}
+		else{
+			alert("NaN or out of range");
+		}
+
+	}
+
+	function onKeyUp(evt) {
+
+		rotator = false;
+		scaleGeo = false;
+		game = false;
+		if(!fun&&!game){
+			hirezGeoSwitcher=true;
+			draw = false;
+		}
+
+	}
+
+	function printVerts(){
+		console.log("clicked to printVerts");
+		savingmode = true;
+
+		for(q in geometry.vertices){
+			sverts += (geometry.vertices[q].x +"," + geometry.vertices[q].y+"," + geometry.vertices[q].z+",");
+		}
+		document.getElementById('designTextArea').value = sverts;
+
+		var metadata = funx + "|" + funy + "|" + funz + "|" + funsc + "|" + radius + "|" + wScale;
+		document.getElementById('metaData').value = metadata;		
+		console.log("metadata: "+ metadata);
+
+		var dataUrl = renderer.domElement.toDataURL("image/png");
+		document.getElementById('imageData').value = dataUrl;
+		
+	}
+	
+	function removal(num){
+		var n = num || 0;
+
+		for (var i = rotateParent.children.length-1 ; i >= n ; i--){
+			//scene.remove(rotateParent.children[i]);//tubes[i]);
+			if(reGeo)
+			rotateParent.remove(rotateParent.children[i]);
+		}
+	}
+
+	function killGeo(){
+		while(geometry.vertices.length>0)
+		geometry.vertices.pop();
+
+		console.log(geometry);
+	}
+
+	function onDocumentMouseMove(event) {
+
+		hirezGeo = false;
+
+		x=event.clientX;
+		y=event.clientY-20;
+
+
+		//if(draw && count == 0){
+	//		drawLine();
+			
+//		}
+		if(rotator){
+			//console.log(geometry);
+			rotateGeometry(x,y,0,true);
+			
+		}
+		else if(scaleGeo){
+			scaleGeometry(geoSX +=(y-sty[0])*0.001);
+
+		}
+		
+
+		geoSX = 1;
+	}
+
+	function drawLine(){
+
+			var projector = new THREE.Projector();
+		
+		    var vector = new THREE.Vector3(
+		    ( x / width)*2 -1,// * 2 - 1,
+		    - ( y / height) *2 + 1,// * 2 + 1,
+		    -1000 );
+
+		    var ray = projector.pickingRay( vector, camera );
+
+		    var intersect = ray.intersectObject( plane ); 
+		    //console.log(geometry.vertices);
+
+		    if ( intersect.length > 0) { 
+
+		    	pPos = new THREE.Vector3(intersect[0].point.x,intersect[0].point.y,intersect[0].point.z);
+
+		    	if(geometry.vertices.length==0)
+		    		geometry.vertices.push(pPos);
+		    	else if(pPos.x!=geometry.vertices[geometry.vertices.length-1].x )
+		        	geometry.vertices.push(pPos);
+		    	
+
+		        var tempRotatorer = new THREE.Object3D();
+
+				if(rotateParent.children.length>0){
+					removal();
+				}
+
+				//if (geometry.vertices.length > 2 && geometry.vertices.length < 5000) {
+
+					//updateGeo(1,radius,5);
+
+				//}
+		    }
+	}
+
+	function rotateGeometry(tx,ty,tz,mouse){
+
+		var mouseMove = mouse;
+
+		var parms = [];
+
+		if(mouseMove){
+			parms.rx = (ty-sty[0])*-0.011;
+			parms.ry = (tx-stx[0])*-0.011;
+			parms.rz = 0;
+		}
+		else{
+			parms.rx = ty;
+			parms.ry = tx;
+			parms.rz = tz;
+		}
+
+		//console.log(parms);
+
+
+		for(var i = 0 ; i < geometry.vertices.length ; i++){
+
+			var obj = geometry.vertices[i];
+
+			
+
+			var parms2 = [];
+			parms2.x = obj.x;
+			parms2.y = obj.y;
+			parms2.z = obj.z;
+
+			var newMat = jMatMult(makeMatrix(parms2),makeMatrix(parms));
+			//console.log(newMat);
+
+			obj.x = newMat[12];
+			obj.y = newMat[13];
+			obj.z = newMat[14];
+			
+		}
+
+		if(rotateParent.children.length>0){
+				removal();
+		}
+
+		//updateGeo(1,radius,4);
+	}
+
+	function scaleGeometry(geoSX){
+
+			
+				
+			var parms = [];
+			parms.sx = geoSX;
+			parms.sy = geoSX;
+			parms.sz = geoSX;
+
+			for(var i = 0 ; i < geometry.vertices.length ; i++){
+
+				var obj = geometry.vertices[i];
+
+				var parms2 = [];
+				parms2.x = obj.x;
+				parms2.y = obj.y;
+				parms2.z = obj.z;
+
+				var newMat = jMatMult(makeMatrix(parms2),makeMatrix(parms));
+				//console.log(newMat);
+
+				obj.x = newMat[12];
+				obj.y = newMat[13];
+				obj.z = newMat[14];
+				
+			}
+
+			if(rotateParent.children.length>0){
+					removal();
+			}
+
+			//updateGeo(1,radius,4);
+
+	}
+
+	function averageVertices(geo){
+
+		for(var j = 0 ; j < geo.vertices.length ; j++){
+
+			var small = new THREE.Vector3(0,0,0);
+			var big = new THREE.Vector3(0,0,0);
+
+			for(var i = -1 ; i < 2 ; i++){
+
+				if(j>1&&j<geo.vertices.length-2){
+					small.x += geo.vertices[j+i].x;
+					small.y += geo.vertices[j+i].y;
+					small.z += geo.vertices[j+i].z;
+				
+				}
+			}
+
+			small.x/=3;
+			small.y/=3;
+			small.z/=3;
+			
+				if(j>1&&j<geo.vertices.length-2){
+					geo.vertices[j]=small;
+				}
+			
+		}
+
+	}
+
+	function updateGeo(detail,size,rad){
+
+		var d = detail 	|| 2;
+		var s = size 	|| 5;
+		var r = rad 	|| 3;
+
+		//averageVertices(geometry);
+
+		var line = new THREE.Line(geometry, material);
+
+				
+		var curve = new THREE.SplineCurve3(geometry.vertices);
+		var geo = new THREE.TubeGeometry(curve, geometry.vertices.length*d, s, r, closed);
+		
+		var small = new THREE.Vector3(0,0,0);
+		var big = new THREE.Vector3(0,0,0);
+
+		for(var i = 0 ; i < rad ; i++){
+			small.x += geo.vertices[i].x;
+			small.y += geo.vertices[i].y;
+			small.z += geo.vertices[i].z;
+			big.x += geo.vertices[geo.vertices.length-1-i].x;
+			big.y += geo.vertices[geo.vertices.length-1-i].y;
+			big.z += geo.vertices[geo.vertices.length-1-i].z;
+
+		}
+		small.x/=rad;
+		small.y/=rad;
+		small.z/=rad;
+
+		big.x/=rad;
+		big.y/=rad;
+		big.z/=rad;
+
+		geo.mergeVertices();
+
+		for(var i = 0 ; i < rad ; i++){
+			geo.vertices[i]=small;
+			geo.vertices[geo.vertices.length-1-i]=big;
+		}
+
+
+		tubeMesh = new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color: 0xffffff}));//THREE.SceneUtils.createMultiMaterialObject(geo, [new THREE.MeshLambertMaterial({color: 0xffffff})]);
+
+		tubeMesh.name = "tubeMesh";
+		//tubes.push(tubeMesh);
+		//scene.add(tubeMesh);  
+		
+		
+		var rotatorer = new THREE.Object3D();
+		//rotatorer.rotation = tempRotatorer.rotation;
+		//console.log(rotatorer.rotation.x);
+		rotatorer.name = "rotateChild";
+
+		rotatorer.add(tubeMesh);
+		rotateParent.add(rotatorer);
+
+	}
+
+	function animate() {
+
+		
+
+		if(draw && count == 0){
+			drawLine();
+		}
+
+		hirezGeo=true;
+		updateMouse(x,y);
+
+		if(draw||rotator||game||scaleGeo||fun || noisy){
+			if(geometry.vertices.length>0)
+				updateGeo(1,radius,5);
+		}
+		else
+			hirezGeo=true;
+
+		count++;
+		time+=Math.PI/3;
+		//console.log(count);
+		if(count%2==0)
+			count=0;
+
+		setTimeout( function() {
+
+        	requestAnimationFrame( animate );
+
+   		 }, 1000 / 30 );
+
+		if(ana)
+		effect.render( scene, camera );
+		else
+		renderer.render(scene,camera);
+
+		if(!draw && !rotator && hirezGeo && hirezGeoSwitcher){
+			//console.log(rotateParent.children.length);
+			if(rotateParent.children.length>0){
+				removal();
+			}
+			//console.log(rotateParent.children.length);
+			if(geometry.vertices.length>0)
+				updateGeo(7,radius,9);
+
+			hirezGeo=false;
+			hirezGeoSwitcher = false;
+		}
+		if(fun){
+			draw=true;
+			try{
+			rotateGeometry(eval(funx),eval(funy),eval(funz),false);
+			scaleGeometry(eval(funsc));
+			}
+			catch(e){
+				alert("nope" + e.message);
+			}
+			
+		}
+		if(game){
+			rotateGeometry(.2*(((x/width)*2)-1),.2*(((y/height)*2)-1),0,false);
+		}
+		if(noisy)
+		noiseVerts(geometry);
+	//}
+	}
+
+	function updateMouse(x,y){
+		stx.push(x);
+		sty.push(y);
+		if(stx.length>1){
+			stx.shift();
+			sty.shift();
+		}
+
+	}
+
+
+	</script>
+
+	<script>
+
+
+	</script>
+
+	
+
+	</body>
+</html>

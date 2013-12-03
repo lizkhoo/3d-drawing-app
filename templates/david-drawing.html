@@ -2,16 +2,32 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="../static/css/modal.css"/>
 	<style>
-		body {
-			margin: 0px;
-			padding: 0px;
-					background-color: #000000;
-					overflow: hidden;
-				}
+	body {
+		margin: 0px;
+		padding: 0px;color:white;
+		font-size:.9em;
+		background-color: #000000;		
+		overflow: hidden;
+	}
+	strong{
+		color:red;
+		font-size:1.2em;
+	}
+	#bar{
+		background-color:#002244;
+	}
+	textarea{
+		box-sizing:no-border;
+	}
 	</style>
 
 	<script type="text/javascript" src="../static/js/modal.js"></script>
 	<script type="text/javascript" src="../static/js/three.min.js"></script>
+	<script type="text/javascript" src="../static/js/three.min.js"></script>
+	<script type="text/javascript" src="../static/js/anaglyph.js"></script>
+	<script type="text/javascript" src="../static/js/fileSaver.js"></script>
+	<script type="text/javascript" src="../static/js/lobserCollection.js"></script>
+	
 </head>
 
 <body>
@@ -130,7 +146,10 @@
 		count=0;
 		z=0.1;
 
-		renderer = new THREE.WebGLRenderer();
+		renderer = new THREE.WebGLRenderer({
+			 preserveDrawingBuffer: true;
+		});
+		
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
 
@@ -205,7 +224,7 @@ console.log(tubeMesh);
 
 
 	function onDocumentMouseDown( event ) {
-		console.log("function onDocumentMouseDown");
+		
 		if(event.clientY>20)
 		draw = !draw;
 	}
@@ -219,7 +238,7 @@ console.log(tubeMesh);
 		//document.getElementById("frm1").submit();
 
 		var dataUrl = renderer.domElement.toDataURL("image/png");
-		document.getElementById('imageData').src = dataUrl;
+		document.getElementById('imageData').value = dataUrl;
 		
 	}
 	
@@ -236,8 +255,7 @@ console.log(tubeMesh);
 	}
 
 	function onDocumentMouseMove( event ) {
-		console.log("function onDocumentMouseMove");
-
+		
 		if(draw && count == 0){
 		
 			var x=event.clientX;

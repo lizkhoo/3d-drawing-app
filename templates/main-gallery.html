@@ -10,7 +10,9 @@
 	<div class="boxcontainer">
 
 		{% if design.image %}
-		  <p><img src="{{ design.image }}" /><p>
+		  <div id="{{ design.slug }}"></div>
+		  <script>var vertices="{{ design.design }}"; var divID = "{{ design.slug }}";</script>
+		  <script src="../static/js/simpleThree.js"></script>
 		{% endif %}
 
 		<h1><a href="/designs/{{ design.slug }}">{{ design.title }}</a></h1>
