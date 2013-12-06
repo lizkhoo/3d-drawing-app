@@ -9,9 +9,10 @@
 		font-size:.9em;
 		background-color: #000000;		
 		overflow: hidden;
+		font-family:'Open Sans', sans-serif;
 	}
 	strong{
-		color:red;
+		color: #FFE0D1;
 		font-size:1.2em;
 	}
 	ul{
@@ -33,7 +34,6 @@
 		background: #6B96A4;
 		color: white;
 		border: 0px;
-		font-size: 120%;
 		font-weight: bold;
 		margin: 0.25em 0;
 		padding: .5em 1.5em;
@@ -42,13 +42,16 @@
 		background: #8AC1D4;
 		color: white;
 		border: 0px;
-		font-size: 120%;
 		font-weight: bold;
 		margin: 0.25em 0;
 	}
 	textarea{
-		box-sizing:no-border;
+		width: 160px;
+		height: 20px;
+		border:1px solid #6B96A4;
+		background-color: #8AC1D4;	
 	}
+	
 </style>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
@@ -63,7 +66,8 @@
 <!-- ======= BUTTONS ======= -->
 <ul>
 	
-	<li>Keyboard :<strong>d</strong>raw <br>
+	<li><strong style="color: white;">Keyboard Commands:</strong><br>
+		<strong>d</strong>raw <br>
 		<strong>r</strong>otate <br>
 		<strong>s</strong>cale <br>
 		<strong>c</strong>lear one <br>
@@ -75,26 +79,29 @@
 		<strong>L</strong> for anaglyph (3d) <br>
 		<strong>p</strong>edraw <br>
 		<strong>n</strong>oise</li>
+		<hr width="180px">
 	
-	<li>X <textarea id="x" default-value="0" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
+	<li>X  <textarea id="x" default-value="0" name="user"></textarea></li>
 		
-	<li>Y <textarea id="y" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
+	<li>Y  <textarea id="y" value="0" name="user"></textarea></li>
 
-	<li>Z <textarea id="z" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
+	<li>Z  <textarea id="z" value="0" name="user"></textarea></li>
 
-	<li>SC <textarea id="sc" value="1" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
+	<li>SC <textarea id="sc" value="1" name="user"></textarea></li>
 
-	<li><input type="button" id="funbutton" value="fun" style="width:50px;background-color:white"onclick="onFun();"></li>
+	<li><input type="button" id="funbutton" value="fun" onclick="onFun();"></li>
 
-	<li><input type="text" id="fat" value="5"name="user" style="width:30px" cols="3" rows="1">
+	<li><textarea id="fat" value="5" name="user"></textarea>
 	<input type="button" id="buttonid" value="fat" onclick="changeThickness()"></li>
 
-	<li><input type="text" id="scale" value="1" name="user" style="width:30px" cols="3" rows="1">
-	<input type="button" id="buttonid" value="scale" onclick="changeScale()"><br>
-	<span id="setscale">output scale<span></li>
+	<li><textarea id="scale" value="1" name="user"></textarea>
+	<input type="button" id="buttonid" value="scale" onclick="changeScale()"><span id="setscale"> output scale<span></li>
 
-	<li><a href="#modal-form" class="call-modal"><input type="button" value="SAVE" onClick="printVerts();"></a></li>
-	<li><input type="button" value="CLEAR" OnClick="removal();killGeo();camParent.rotation.x=0;//camera.rotation.x -= .1;camera.position.y=0;"></li>
+	<p>
+	<p>
+	<li><a href="#modal-form" class="call-modal"><input type="button" value="SAVE" onClick="printVerts();"></a>
+	<input type="button" value="CLEAR" OnClick="removal();killGeo();camParent.rotation.x=0;//camera.rotation.x -= .1;camera.position.y=0;"></li>
+
 </ul>
 
 <div id="main">
@@ -507,12 +514,11 @@
 
 	funColor = function(){
 		if(fun){
-	   document.getElementById("funbutton").setAttribute("style","background-color:red");
+	   document.getElementById("funbutton").setAttribute("style","background-color: #FFE0D1");
 		}
-		else
-		document.getElementById("funbutton").setAttribute("style","background-color:white");
-
-	}
+		else {
+		document.getElementById("funbutton").setAttribute("style","background-color: #6B96A4");
+	}};
 
 	changeThickness = function(){
 		var tradius = document.getElementById('fat');
