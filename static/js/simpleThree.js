@@ -5,7 +5,7 @@ var balls = [];
 	//console.log(container);
 
 	var renderer = new THREE.WebGLRenderer({antialias:true});
-	renderer.setSize( 300, 300 );
+	renderer.setSize( 200, 200 );
 
 	container.appendChild(renderer.domElement);
 

@@ -3,7 +3,7 @@
 <head>
 <link rel="stylesheet" type="text/css" href="../static/css/modal.css"/>
 <style>
-	body {
+	body{
 		margin: 0px;
 		padding: 0px;color:white;
 		font-size:.9em;
@@ -14,8 +14,37 @@
 		color:red;
 		font-size:1.2em;
 	}
-	#bar{
-		background-color:#002244;
+	ul{
+		background-color:#2E5D74;
+		list-style-type:none;
+		margin-left: -180px;
+		width:200px;
+		position: fixed;
+		top: 0;
+		left: 150px;
+		bottom: 0;
+		z-index: 1;
+		opacity: 0.9;
+	}
+	#main {
+		display:block;
+	}
+	input[type="button"]{
+		background: #6B96A4;
+		color: white;
+		border: 0px;
+		font-size: 120%;
+		font-weight: bold;
+		margin: 0.25em 0;
+		padding: .5em 1.5em;
+	}
+	input[type="button"]:hover{
+		background: #8AC1D4;
+		color: white;
+		border: 0px;
+		font-size: 120%;
+		font-weight: bold;
+		margin: 0.25em 0;
 	}
 	textarea{
 		box-sizing:no-border;
@@ -32,29 +61,43 @@
 </head>
 <body>
 <!-- ======= BUTTONS ======= -->
-<div id="bar">
-	<a href="#modal-form" class="call-modal"><input type="button" value="SAVE" onClick="printVerts();"></a>
-	<input type="button" value="CLEAR" OnClick="removal();killGeo();camParent.rotation.x=0;//camera.rotation.x -= .1;camera.position.y=0;">
-	Keyboard :<strong>d</strong>raw - <strong>r</strong>otate - <strong>s</strong>cale - <strong>c</strong>lear one - <strong>C</strong>lear all - <strong>a</strong>verages - <strong>f</strong>un - <strong>g</strong>ame - <strong>w</strong>rite .obj - <strong>L</strong> for anaglyph (3d) - <strong>p</strong>edraw - <strong>n</strong>oise 
+<ul>
 	
-	X <textarea id="x" default-value="0" name="user" style="width:160px" cols="3" rows="1"></textarea>
+	<li>Keyboard :<strong>d</strong>raw <br>
+		<strong>r</strong>otate <br>
+		<strong>s</strong>cale <br>
+		<strong>c</strong>lear one <br>
+		<strong>C</strong>lear all <br>
+		<strong>a</strong>verages <br>
+		<strong>f</strong>un <br>
+		<strong>g</strong>ame <br>
+		<strong>w</strong>rite .obj export<br>
+		<strong>L</strong> for anaglyph (3d) <br>
+		<strong>p</strong>edraw <br>
+		<strong>n</strong>oise</li>
+	
+	<li>X <textarea id="x" default-value="0" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
 		
-	Y <textarea id="y" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea>
+	<li>Y <textarea id="y" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
 
-	Z <textarea id="z" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea>
+	<li>Z <textarea id="z" value="0" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
 
-	SC <textarea id="sc" value="1" name="user" style="width:160px" cols="3" rows="1"></textarea>
+	<li>SC <textarea id="sc" value="1" name="user" style="width:160px" cols="3" rows="1"></textarea></li>
 
-	<input type="button" id="funbutton" value="fun" style="width:50px;background-color:white"onclick="onFun();">
+	<li><input type="button" id="funbutton" value="fun" style="width:50px;background-color:white"onclick="onFun();"></li>
 
-	<input type="text" id="fat" value="5"name="user" style="width:30px" cols="3" rows="1">
-	<input type="button" id="buttonid" value="fat" style="width:50px"onclick="changeThickness()">
+	<li><input type="text" id="fat" value="5"name="user" style="width:30px" cols="3" rows="1">
+	<input type="button" id="buttonid" value="fat" onclick="changeThickness()"></li>
 
-	<input type="text" id="scale" value="1" name="user" style="width:30px" cols="3" rows="1">
-	<input type="button" id="buttonid" value="scale" style="width:50px"onclick="changeScale()"><span id="setscale">output scale<span>
+	<li><input type="text" id="scale" value="1" name="user" style="width:30px" cols="3" rows="1">
+	<input type="button" id="buttonid" value="scale" onclick="changeScale()"><br>
+	<span id="setscale">output scale<span></li>
 
-</div>
+	<li><a href="#modal-form" class="call-modal"><input type="button" value="SAVE" onClick="printVerts();"></a></li>
+	<li><input type="button" value="CLEAR" OnClick="removal();killGeo();camParent.rotation.x=0;//camera.rotation.x -= .1;camera.position.y=0;"></li>
+</ul>
 
+<div id="main">
 <!-- ======= POPUP FORM ======= -->
 
 <!-- A modal with its content -->
@@ -850,6 +893,6 @@
 	</script>
 
 	
-
+</div> <!-- end div main -->
 	</body>
 </html>
