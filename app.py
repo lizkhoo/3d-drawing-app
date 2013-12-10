@@ -22,7 +22,7 @@ db = MongoEngine(app)
 import models
 
 # checkbox of categories
-categories = ['home good','accessory','art piece']
+categories = ['swirly','geometric','ornamental','text','ugly','elegant','commerically viable','active','pottery','animal','human','sci-fi','Favorite!','vegetable','woven']
 
 # --Routes--
 # homepage

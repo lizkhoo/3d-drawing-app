@@ -3,36 +3,37 @@
 
 {% block body %}
 
-<div class="row">
+<div id="content">
+	<h3>{{ current_category.get('name')|title }}</h3>
 
-	<div class="span6">
-		<h3>{{ current_category.get('name')|title }}</h3>
+	{% if design.categories = current_category.get('name') %}
+	{% for design in designs %}
+	<div class="boxportfolio4">
+	<div class="boxcontainer">
 
-		{% for design in designs %}
+		{% if design.image %}
+		  <div id="{{ design.slug }}"></div>
+		  <a href="/designs/{{ design.slug }}">
+		  <script>var vertices="{{ design.design }}"; var divID = "{{ design.slug }}";</script>
+		  <script src="../static/js/simpleThree.js"></script>
+		{% endif %}
+
+		<div class="roll"></div>
+
+		<h1>{{ design.title }}</h1></a>
 		<p>by {{ design.designer }}</p>
-		<p>
-			{% for cat in design.categories %}
-				<span class="label label-inverse"></a href="/category/{{ cat}}">{{cat|replace("_","")}}</a></span>
-			{% endfor %}
-			<hr/>
+		
+		{% for cat in design.categories %}
+			<span class="label label-inverse">
+				<a href="/category/{{ cat }}">{{ cat|replace("_"," ") }}</a>
+			</span>
 		{% endfor %}
+		</p>
 
 	</div>
-
-	<div>
-		<h3>Categories</h3>
-		<ul>
-			{% for cat in categories %}
-			<li><a href="/category/{{ cat|replace(" ","_") }}">{{ cat|title }}</a></li>
-			{% endfor %}
-		</ul>
-
-		<p>
-
-		<a href="/" class="btn btn-large btn-info">Add Your Design</a>
-
 	</div>
-
+	{% endfor %}
+	{% endif %}
 </div>
 
 {% endblock %}

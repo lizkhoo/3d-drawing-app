@@ -176,6 +176,47 @@ function RTSmat(x,y,z,t,s){
 
 	
 	}
+	function saver2(obj,scale) {
+
+	
+		alert("saving!");
+		var j = 0;
+		var output = "";
+		console.log(obj);
+		if(obj.children){
+		
+			for (var i = 0 ; i < obj.children.length ; i++){
+				
+				//grrr - somehow two extra objects are being added to the msh array - so I'm manually skipping them, messy
+				if(i == obj.children.length-2 || i == obj.children.length-3) i++;
+				else{
+					output += THREE.saveGeometryToObj4(obj.children[i].children[0],j,scale);
+					j += obj.children[i].children[0].geometry.vertices.length;
+				}
+			}
+		}
+
+		else
+			output += THREE.saveGeometryToObj4(obj,j,scale);
+		
+		//console.log(output);
+		output.replace("undefined","");
+		alert("saved!");
+		var blob = new Blob([output], {type: "text/plain;charset=ANSI"});
+		saveAs(blob, "swirl.obj");
+
+	
+	}
+
+
+
+
+	
+
+
+
+
+
 
 
 var fromPrototype = function(prototype, object) {

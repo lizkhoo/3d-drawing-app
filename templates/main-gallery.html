@@ -21,7 +21,7 @@
 		<p>by {{ design.designer }}</p>
 		
 		{% for cat in design.categories %}
-			<span class="label label-inverse">
+			<span class="label">
 				<a href="/category/{{ cat}}">{{ cat|replace("_"," ") }}</a>
 			</span>
 		{% endfor %}
