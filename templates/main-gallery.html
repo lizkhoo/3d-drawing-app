@@ -10,13 +10,14 @@
 
 		{% if design.image %}
 		  <div id="{{ design.slug }}"></div>
+		  <a href="/designs/{{ design.slug }}">
 		  <script>var vertices="{{ design.design }}"; var divID = "{{ design.slug }}";</script>
 		  <script src="../static/js/simpleThree.js"></script>
 		{% endif %}
 
 		<div class="roll"></div>
 
-		<h1><a href="/designs/{{ design.slug }}">{{ design.title }}</a></h1>
+		<h1>{{ design.title }}</h1></a>
 		<p>by {{ design.designer }}</p>
 		
 		{% for cat in design.categories %}
